@@ -356,7 +356,7 @@ get_header();
                                     placeholder="Anything else to help review the requirement"></textarea></div>
                         </div>
                     </details>
-                    <div class="ab-product-form-foot"><button class="ab-btn ab-btn--blue" type="submit">Review ABS
+                    <div class="ab-product-form-foot"><button class="ab-btn" type="submit">Review ABS
                             requirement
                             <svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
@@ -478,7 +478,7 @@ get_header();
                     <div class="ab-selection-callout">If available, attach the current technical datasheet or target
                         specification. Required properties and compliance needs should be checked against grade-specific
                         documentation.</div>
-                    <div class="ab-selection-action"><a class="ab-btn ab-btn--blue" href="#primary-enquiry">REQUEST
+                    <div class="ab-selection-action"><a class="ab-btn" href="#primary-enquiry">REQUEST
                             MATERIAL
                             GUIDANCE <svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
@@ -724,7 +724,7 @@ get_header();
                                 decoding="async"></div>
                         <div class="ab-knowledge-body"><span class="ab-knowledge-tag">Processing guide</span>
                             <h3>ABS Processing Methods</h3>
-                            ><a class="ab-link" href="<?php echo esc_url( ab_knowledge_article_url( 'abs-processing-methods' ) ); ?>">Read article
+                            <a class="ab-link" href="<?php echo esc_url( ab_knowledge_article_url( 'abs-processing-methods' ) ); ?>">Read article
                                 <svg class="ab-icon" aria-hidden="true">
                                     <use href="#ab-icon-arrow" />
                                 </svg></a>

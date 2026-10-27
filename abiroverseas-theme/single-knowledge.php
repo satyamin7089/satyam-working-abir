@@ -76,7 +76,7 @@ if ( $faqs || $has_section_note['faqs'] ) { $toc_items[] = array( 'article-faqs'
 if ( $related || $has_section_note['related'] ) { $toc_items[] = array( 'related-links', $headings['related'] ?: 'Related materials' ); }
 if ( $cta_kicker || $cta_title || $cta_text || ( $cta_url && $cta_label ) || $has_section_note['cta'] ) { $toc_items[] = array( 'material-enquiry', $cta_title ?: 'Contact our team' ); }
 ?>
-<main id="kh-main" class="kh-main kh-article-main">
+<main id="main-content" class="kh-main kh-article-main">
 
   <header class="kh-article-hero"><div class="kh-shell kh-article-hero-layout<?php echo has_post_thumbnail() ? ' has-featured' : ' no-featured'; ?>">
     <div class="kh-article-hero-copy">

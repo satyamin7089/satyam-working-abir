@@ -297,7 +297,7 @@ get_header();
                             &amp; documents</span></div>
                 </div>
                 <form class="ab-product-form ab-reveal ab-reveal-delay-1" id="hdpe-enquiry-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" enctype="multipart/form-data" novalidate>
-                <input type="hidden" name="action" value="ab_material_enquiry"><input type="hidden" name="enquiry_kind" value="hdpe"><?php wp_nonce_field( 'ab_material_enquiry', 'ab_material_enquiry_nonce' ); ?><label class="ab-honeypot" aria-hidden="true">Leave this field empty<input type="text" name="ab_website" tabindex="-1" autocomplete="off"></label>
+                <input type="hidden" name="action" value="ab_material_enquiry"><input type="hidden" name="enquiry_kind" value="ps"><?php wp_nonce_field( 'ab_material_enquiry', 'ab_material_enquiry_nonce' ); ?><label class="ab-honeypot" aria-hidden="true">Leave this field empty<input type="text" name="ab_website" tabindex="-1" autocomplete="off"></label>
                     <h3>Submit an HDPE requirement</h3>
                     <p>Complete what you know. Your enquiry is emailed to the site administrator address configured in WordPress. Optional attachments are checked before sending.</p>
                     <div class="ab-product-form-grid">
@@ -378,7 +378,7 @@ get_header();
                                     placeholder="Anything else to help review the requirement"></textarea></div>
                         </div>
                     </details>
-                    <div class="ab-product-form-foot"><button class="ab-btn ab-btn--blue" type="submit">Review HDPE
+                    <div class="ab-product-form-foot"><button class="ab-btn" type="submit">Review HDPE
                             requirement
                             <svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
@@ -494,7 +494,7 @@ get_header();
                     <div class="ab-selection-callout">If available, attach the current technical datasheet or target
                         specification. Required properties and compliance needs should be checked against grade-specific
                         documentation.</div>
-                    <div class="ab-selection-action"><a class="ab-btn ab-btn--blue" href="#primary-enquiry">REQUEST
+                    <div class="ab-selection-action"><a class="ab-btn" href="#primary-enquiry">REQUEST
                             MATERIAL
                             GUIDANCE <svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
@@ -789,7 +789,7 @@ get_header();
                                 decoding="async"></div>
                         <div class="ab-knowledge-body"><span class="ab-knowledge-tag">Processing guide</span>
                             <h3>HDPE Processing Methods</h3>
-                            ><a class="ab-link" href="<?php echo esc_url( ab_knowledge_article_url( 'hdpe-processing-methods' ) ); ?>">Read article
+                            <a class="ab-link" href="<?php echo esc_url( ab_knowledge_article_url( 'hdpe-processing-methods' ) ); ?>">Read article
                                 <svg class="ab-icon" aria-hidden="true">
                                     <use href="#ab-icon-arrow" />
                                 </svg></a>

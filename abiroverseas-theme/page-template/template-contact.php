@@ -133,7 +133,7 @@ if ( isset( $_GET['ab_enquiry'] ) && is_scalar( $_GET['ab_enquiry'] ) ) {
                         </div>
                     </div>
                     <div class="ab-form-foot">
-                        <button class="ab-btn ab-btn--blue ab-contact-submit" type="submit">Submit enquiry <span aria-hidden="true">↗</span></button>
+                        <button class="ab-btn ab-contact-submit" type="submit">Submit enquiry <span aria-hidden="true">↗</span></button>
                         <span class="ab-contact-secure-note"><span aria-hidden="true">✓</span> Your details are used to respond to your enquiry.</span>
                     </div>
                     <p class="ab-form-disclaimer">Your message is sent to the site administrator email configured in WordPress.</p>

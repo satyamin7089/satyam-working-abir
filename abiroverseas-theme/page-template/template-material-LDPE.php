@@ -347,7 +347,7 @@ get_header();
                                     placeholder="Anything else to help review the requirement"></textarea></div>
                         </div>
                     </details>
-                    <div class="ab-product-form-foot"><button class="ab-btn ab-btn--blue" type="submit">Review LDPE
+                    <div class="ab-product-form-foot"><button class="ab-btn" type="submit">Review LDPE
                             requirement
                             <svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
@@ -496,7 +496,7 @@ get_header();
                     <div class="ab-selection-callout">If available, attach the current technical datasheet or target
                         specification. Required properties and compliance needs should be checked against grade-specific
                         documentation.</div>
-                    <div class="ab-selection-action"><a class="ab-btn ab-btn--blue" href="#primary-enquiry">REQUEST
+                    <div class="ab-selection-action"><a class="ab-btn" href="#primary-enquiry">REQUEST
                             MATERIAL
                             GUIDANCE <svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
