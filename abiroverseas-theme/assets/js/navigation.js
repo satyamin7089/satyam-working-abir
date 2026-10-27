@@ -1,110 +1,156 @@
-(() => {
-  const nav = document.querySelector('.ab-nav-links');
-  const toggle = document.querySelector('.ab-nav-toggle');
-  if (!nav || !toggle || toggle.dataset.navReady === 'true') return;
-  toggle.dataset.navReady = 'true';
+/**
+ * Shared header navigation, touch dropdowns, scroll-to-top, and reveal controller.
+ */
+(function () {
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var navToggle = document.querySelector('[data-nav-toggle]');
+  var navMenu = document.querySelector('[data-nav-menu]');
+  var dropdownItems = Array.prototype.slice.call(
+    document.querySelectorAll('.ab-nav-menu > li.has-dropdown, .ab-nav-menu > li.menu-item-has-children')
+  );
 
-  const mobileQuery = window.matchMedia('(max-width: 850px)');
-  const closeSubmenus = (except = null) => {
-    nav.querySelectorAll('li.is-submenu-open').forEach((item) => {
-      if (item === except) return;
-      item.classList.remove('is-submenu-open');
-      const button = item.querySelector(':scope > .ab-submenu-toggle');
-      if (button) button.setAttribute('aria-expanded', 'false');
+  function setExpanded(item, expanded) {
+    item.classList.toggle('is-open', expanded);
+    var trigger = item.querySelector(':scope > a, :scope > .ab-dropdown-toggle');
+    if (trigger) {
+      trigger.setAttribute('aria-expanded', String(expanded));
+    }
+  }
+
+  function closeDropdowns(exceptItem) {
+    dropdownItems.forEach(function (item) {
+      if (item !== exceptItem) {
+        setExpanded(item, false);
+      }
     });
-  };
-  const closeMenu = () => {
-    nav.style.removeProperty('display');
-    nav.classList.remove('is-open');
-    toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', 'Open navigation menu');
-    closeSubmenus();
-  };
+  }
 
-  // Add accessible tap targets beside every WordPress menu item with children.
-  nav.querySelectorAll('.menu-item-has-children').forEach((item, index) => {
-    const link = item.querySelector(':scope > a');
-    const submenu = item.querySelector(':scope > .sub-menu');
-    if (!link || !submenu || item.querySelector(':scope > .ab-submenu-toggle')) return;
+  function closeMobileMenu() {
+    if (!navMenu || !navToggle) return;
+    navMenu.classList.remove('is-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+    closeDropdowns(null);
+  }
 
-    const submenuId = submenu.id || `ab-submenu-${index + 1}`;
-    submenu.id = submenuId;
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'ab-submenu-toggle';
-    button.setAttribute('aria-label', `Toggle ${link.textContent.trim()} submenu`);
-    button.setAttribute('aria-expanded', 'false');
-    button.setAttribute('aria-controls', submenuId);
-    link.insertAdjacentElement('afterend', button);
+  dropdownItems.forEach(function (item) {
+    var link = item.querySelector(':scope > a');
+    if (!link) return;
+    link.setAttribute('aria-haspopup', 'true');
+    if (!link.hasAttribute('aria-expanded')) {
+      link.setAttribute('aria-expanded', 'false');
+    }
 
-    button.addEventListener('click', (event) => {
+    var toggle = item.querySelector(':scope > .ab-dropdown-toggle');
+    if (!toggle) {
+      toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'ab-dropdown-toggle';
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Toggle ' + (link.textContent || 'submenu').trim() + ' submenu');
+      toggle.innerHTML = '<svg class="ab-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      link.insertAdjacentElement('afterend', toggle);
+    }
+
+    toggle.addEventListener('click', function (event) {
       event.preventDefault();
       event.stopPropagation();
-      const willOpen = !item.classList.contains('is-submenu-open');
-      closeSubmenus(item);
-      item.classList.toggle('is-submenu-open', willOpen);
-      button.setAttribute('aria-expanded', String(willOpen));
+      var willOpen = !item.classList.contains('is-open');
+      closeDropdowns(item);
+      setExpanded(item, willOpen);
+      toggle.setAttribute('aria-expanded', String(willOpen));
+    });
+
+    link.addEventListener('click', function (event) {
+      var href = link.getAttribute('href') || '';
+      var isTouchOrCompact = window.matchMedia('(max-width: 960px), (hover: none)').matches;
+      if (href === '#' || (isTouchOrCompact && !item.classList.contains('is-open'))) {
+        event.preventDefault();
+        var willOpen = !item.classList.contains('is-open');
+        closeDropdowns(item);
+        setExpanded(item, willOpen);
+        toggle.setAttribute('aria-expanded', String(willOpen));
+      }
     });
   });
 
-  // Capture the click before theme/page handlers can swallow it. CSS also keeps
-  // the actual button above any overlapping page decoration on touch screens.
-  document.addEventListener('click', (event) => {
-    const target = event.target instanceof Element ? event.target.closest('.ab-nav-toggle') : null;
-    if (target !== toggle) return;
-    event.preventDefault();
-    event.stopPropagation();
-    const open = toggle.getAttribute('aria-expanded') !== 'true';
-    toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
-    nav.classList.toggle('is-open', open);
-    if (mobileQuery.matches) {
-      if (open) nav.style.setProperty('display', 'flex', 'important');
-      else nav.style.removeProperty('display');
+  if (navToggle && navMenu) {
+    navToggle.addEventListener('click', function (event) {
+      event.stopPropagation();
+      var isOpen = navMenu.classList.toggle('is-open');
+      navToggle.setAttribute('aria-expanded', String(isOpen));
+      if (!isOpen) {
+        closeDropdowns(null);
+      }
+    });
+
+    navMenu.addEventListener('click', function (event) {
+      var anchor = event.target.closest('a[href]');
+      if (!anchor) return;
+      var parentItem = anchor.parentElement;
+      var isParentTrigger = parentItem && (parentItem.classList.contains('has-dropdown') || parentItem.classList.contains('menu-item-has-children')) && anchor.parentElement === parentItem;
+      if (!isParentTrigger && navMenu.classList.contains('is-open')) {
+        closeMobileMenu();
+      }
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!navMenu.contains(event.target) && !navToggle.contains(event.target)) {
+        closeMobileMenu();
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        var wasOpen = navMenu.classList.contains('is-open');
+        closeMobileMenu();
+        if (wasOpen) {
+          navToggle.focus();
+        }
+      }
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 960 && navMenu.classList.contains('is-open')) {
+        closeMobileMenu();
+      }
+    });
+  }
+
+  var scrollTopButton = document.querySelector('[data-scroll-top]');
+  if (scrollTopButton) {
+    var toggleScrollTop = function () {
+      scrollTopButton.classList.toggle('is-visible', window.scrollY > 480);
+    };
+    toggleScrollTop();
+    window.addEventListener('scroll', toggleScrollTop, { passive: true });
+    scrollTopButton.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    });
+  }
+
+  var revealItems = document.querySelectorAll('.ab-reveal');
+  if (revealItems.length) {
+    if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+      revealItems.forEach(function (item) {
+        item.classList.add('is-visible');
+      });
+    } else {
+      var revealObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -32px 0px' }
+      );
+      revealItems.forEach(function (item) {
+        if (!item.classList.contains('is-visible')) {
+          revealObserver.observe(item);
+        }
+      });
     }
-    if (!open) closeSubmenus();
-  }, true);
-
-  nav.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      if (mobileQuery.matches) closeMenu();
-    });
-  });
-
-  document.addEventListener('click', (event) => {
-    if (mobileQuery.matches && nav.classList.contains('is-open') &&
-        !nav.contains(event.target) && !toggle.contains(event.target)) closeMenu();
-  });
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape') return;
-    closeMenu();
-    toggle.focus();
-  });
-
-  const onBreakpointChange = () => {
-    closeMenu();
-    closeSubmenus();
-  };
-  if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', onBreakpointChange);
-  else mobileQuery.addListener(onBreakpointChange);
-})();
-
-/* Back-to-top control: shared footer markup is present on every front-end page. */
-(() => {
-  const button = document.querySelector('.ab-scroll-top');
-  if (!button) return;
-
-  const updateVisibility = () => {
-    button.classList.toggle('is-visible', window.scrollY > 320);
-  };
-
-  button.addEventListener('click', () => {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
-  });
-
-  window.addEventListener('scroll', updateVisibility, { passive: true });
-  window.addEventListener('pageshow', updateVisibility);
-  updateVisibility();
+  }
 })();

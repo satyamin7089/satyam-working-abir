@@ -1,13 +1,204 @@
-(() => {
-            const nav = document.querySelector('.ab-nav-links'), toggle = document.querySelector('.ab-nav-toggle'), mainNav = document.querySelector('.ab-mainnav'), sectionBar = document.querySelector('.ab-prod-sticky-wrap'), sectionScroller = document.querySelector('.ab-prod-sticky'), sectionLinks = [...document.querySelectorAll('.ab-prod-sticky a')], targets = sectionLinks.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean), reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            function measureSticky() {if (mainNav) document.documentElement.style.setProperty('--ab-live-nav-h', `${Math.ceil(mainNav.getBoundingClientRect().height)}px`); if (sectionBar) document.documentElement.style.setProperty('--ab-live-subnav-h', `${Math.ceil(sectionBar.getBoundingClientRect().height)}px`)} measureSticky(); if ('ResizeObserver' in window) {const ro = new ResizeObserver(measureSticky); if (mainNav) ro.observe(mainNav); if (sectionBar) ro.observe(sectionBar)} window.addEventListener('resize', measureSticky, {passive: true});
-            if (toggle && nav) {toggle.addEventListener('click', () => {const open = toggle.getAttribute('aria-expanded') !== 'true'; toggle.setAttribute('aria-expanded', String(open)); toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu'); nav.classList.toggle('is-open', open)}); nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {if (window.innerWidth <= 850) {nav.classList.remove('is-open'); toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-label', 'Open navigation menu')} })); document.addEventListener('click', e => {if (window.innerWidth <= 850 && nav.classList.contains('is-open') && !nav.contains(e.target) && !toggle.contains(e.target)) {nav.classList.remove('is-open'); toggle.setAttribute('aria-expanded', 'false')} }); window.addEventListener('resize', () => {if (window.innerWidth > 850) {nav.classList.remove('is-open'); toggle.setAttribute('aria-expanded', 'false')} })}
-            const reveals = document.querySelectorAll('.ab-reveal:not(.is-visible)'); if ('IntersectionObserver' in window && !reduceMotion) {const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {if (entry.isIntersecting) {entry.target.classList.add('is-visible'); revealObserver.unobserve(entry.target)} }), {threshold: .12, rootMargin: '0px 0px -25px 0px'}); reveals.forEach(el => revealObserver.observe(el))} else reveals.forEach(el => el.classList.add('is-visible'));
-            let activeId = ''; function keepActiveVisible(link) {if (!sectionScroller || window.innerWidth > 700) return; const scrollerRect = sectionScroller.getBoundingClientRect(), linkRect = link.getBoundingClientRect(); if (linkRect.left < scrollerRect.left + 8) sectionScroller.scrollBy({left: linkRect.left - scrollerRect.left - 16, behavior: reduceMotion ? 'auto' : 'smooth'}); else if (linkRect.right > scrollerRect.right - 8) sectionScroller.scrollBy({left: linkRect.right - scrollerRect.right + 16, behavior: reduceMotion ? 'auto' : 'smooth'})}
-            function updateActive() {if (!targets.length) return; const marker = window.scrollY + (mainNav ? mainNav.getBoundingClientRect().height : 0) + (sectionBar ? sectionBar.getBoundingClientRect().height : 0) + 48; let current = targets[0]; for (const target of targets) {if (target.getBoundingClientRect().top + window.scrollY <= marker) current = target; else break} if (current && current.id !== activeId) {activeId = current.id; sectionLinks.forEach(link => {const active = link.hash === `#${activeId}`; link.classList.toggle('is-active', active); if (active) {link.setAttribute('aria-current', 'location'); keepActiveVisible(link)} else link.removeAttribute('aria-current')})} }
-            let scheduled = false; function onScroll() {if (!scheduled) {scheduled = true; requestAnimationFrame(() => {updateActive(); scheduled = false})} } window.addEventListener('scroll', onScroll, {passive: true}); window.addEventListener('resize', onScroll, {passive: true}); sectionLinks.forEach(link => link.addEventListener('click', () => {const dest = document.querySelector(link.getAttribute('href')); if (dest) {activeId = ''; requestAnimationFrame(updateActive)} })); if ('IntersectionObserver' in window) {const activeObserver = new IntersectionObserver(() => updateActive(), {rootMargin: '-24% 0px -66% 0px', threshold: 0}); targets.forEach(target => activeObserver.observe(target))} requestAnimationFrame(updateActive);
-            const gallery = document.querySelector('[data-hdpe-gallery]'); if (gallery) {const slides = [...gallery.querySelectorAll('.ab-gallery-slide')], thumbs = [...gallery.querySelectorAll('.ab-gallery-thumb')], previous = gallery.querySelector('.ab-gallery-arrow--prev'), next = gallery.querySelector('.ab-gallery-arrow--next'); let active = 0, timer = null; function stopGallery() {if (timer) {clearInterval(timer); timer = null} } function startGallery() {stopGallery(); if (!reduceMotion && !document.hidden && !gallery.matches(':hover') && !gallery.matches(':focus-within')) timer = setInterval(() => showSlide(active + 1, false), 5200)} function showSlide(index, manual = true) {active = (index + slides.length) % slides.length; slides.forEach((slide, i) => {const selected = i === active; slide.classList.toggle('is-active', selected); slide.setAttribute('aria-hidden', String(!selected))}); thumbs.forEach((thumb, i) => {const selected = i === active; thumb.classList.toggle('is-active', selected); thumb.setAttribute('aria-pressed', String(selected))}); if (manual) startGallery()} previous?.addEventListener('click', () => showSlide(active - 1)); next?.addEventListener('click', () => showSlide(active + 1)); thumbs.forEach((thumb, i) => thumb.addEventListener('click', () => showSlide(i))); gallery.addEventListener('mouseenter', stopGallery); gallery.addEventListener('mouseleave', startGallery); gallery.addEventListener('focusin', stopGallery); gallery.addEventListener('focusout', event => {if (!gallery.contains(event.relatedTarget)) startGallery()}); gallery.addEventListener('keydown', event => {if (event.key === 'ArrowLeft') {event.preventDefault(); showSlide(active - 1)} else if (event.key === 'ArrowRight') {event.preventDefault(); showSlide(active + 1)} }); document.addEventListener('visibilitychange', () => document.hidden ? stopGallery() : startGallery()); startGallery()}
-            const form = document.querySelector('#hdpe-enquiry-form'), status = document.querySelector('#hdpe-form-status'); if (form) { form.addEventListener('submit', e => { if (!form.reportValidity()) { e.preventDefault(); if (status) { status.textContent = 'Please complete the required fields and check the email address.'; status.dataset.state = 'error'; } return; } if (status) { status.textContent = 'Sending your enquiry…'; status.dataset.state = 'info'; } }); } document.querySelectorAll('[data-current-year]').forEach(el => el.textContent = new Date().getFullYear());
-        })();
-        const result = new URLSearchParams(window.location.search).get('ab_enquiry');
-        if (result) { const node = document.querySelector('#hdpe-form-status'); if (node) { node.textContent = result === 'sent' ? 'Thank you. Your enquiry has been sent.' : 'We could not send your enquiry. Please try again or contact us directly.'; node.dataset.state = result === 'sent' ? 'success' : 'error'; } }
+/**
+ * Material page interactions: hero gallery (slide-based + touch swipe), form prefill/validation, and sticky subnav spy.
+ */
+(function () {
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* 1. Hero gallery + touch swipe */
+  var gallery = document.querySelector('[data-hdpe-gallery], .ab-product-gallery');
+  if (gallery) {
+    var slides = Array.from(gallery.querySelectorAll('.ab-gallery-slide'));
+    var mainImage = gallery.querySelector('[data-gallery-main]');
+    var caption = gallery.querySelector('[data-gallery-caption]');
+    var thumbs = Array.from(gallery.querySelectorAll('.ab-gallery-thumb, [data-gallery-thumb]'));
+    var prevButton = gallery.querySelector('.ab-gallery-arrow--prev, [data-gallery-prev]');
+    var nextButton = gallery.querySelector('.ab-gallery-arrow--next, [data-gallery-next]');
+    var activeIndex = 0;
+    var timer = null;
+
+    var showGalleryImage = function (index) {
+      var count = slides.length || thumbs.length;
+      if (!count) return;
+      activeIndex = (index + count) % count;
+
+      if (slides.length) {
+        slides.forEach(function (slide, slideIndex) {
+          var isCurrent = slideIndex === activeIndex;
+          slide.classList.toggle('is-active', isCurrent);
+          slide.setAttribute('aria-hidden', String(!isCurrent));
+        });
+      } else if (mainImage && thumbs[activeIndex]) {
+        var activeThumb = thumbs[activeIndex];
+        mainImage.src = activeThumb.getAttribute('data-src') || mainImage.src;
+        mainImage.alt = activeThumb.getAttribute('data-alt') || '';
+        if (caption) caption.textContent = activeThumb.getAttribute('data-caption') || '';
+      }
+
+      thumbs.forEach(function (thumb, thumbIndex) {
+        var isCurrent = thumbIndex === activeIndex;
+        thumb.classList.toggle('is-active', isCurrent);
+        thumb.setAttribute('aria-pressed', String(isCurrent));
+      });
+    };
+
+    var stopAuto = function () {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    };
+
+    var startAuto = function () {
+      var count = slides.length || thumbs.length;
+      if (prefersReducedMotion || count < 2) return;
+      stopAuto();
+      timer = window.setInterval(function () {
+        showGalleryImage(activeIndex + 1);
+      }, 4200);
+    };
+
+    thumbs.forEach(function (thumb, index) {
+      thumb.addEventListener('click', function () {
+        showGalleryImage(index);
+        startAuto();
+      });
+    });
+
+    if (prevButton) {
+      prevButton.addEventListener('click', function () {
+        showGalleryImage(activeIndex - 1);
+        startAuto();
+      });
+    }
+
+    if (nextButton) {
+      nextButton.addEventListener('click', function () {
+        showGalleryImage(activeIndex + 1);
+        startAuto();
+      });
+    }
+
+    gallery.addEventListener('mouseenter', stopAuto);
+    gallery.addEventListener('mouseleave', startAuto);
+    gallery.addEventListener('focusin', stopAuto);
+    gallery.addEventListener('focusout', startAuto);
+
+    var artStage = gallery.querySelector('.ab-prod-art') || gallery;
+    var touchStartX = 0;
+    var touchStartY = 0;
+    artStage.addEventListener('touchstart', function (e) {
+      if (!e.touches || !e.touches.length) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    artStage.addEventListener('touchend', function (e) {
+      var count = slides.length || thumbs.length;
+      if (!e.changedTouches || !e.changedTouches.length || count < 2) return;
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      var dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy)) {
+        showGalleryImage(dx < 0 ? activeIndex + 1 : activeIndex - 1);
+        startAuto();
+      }
+    }, { passive: true });
+
+    startAuto();
+  }
+
+  /* 2. Material form prefill & validation */
+  var formField = document.querySelector('#hdpe-form');
+  var datasheetField = document.querySelector('#hdpe-datasheet');
+  var statusText = document.querySelector('#hdpe-form-status');
+  var enquiryForm = document.querySelector('#hdpe-enquiry-form');
+
+  document.querySelectorAll('[data-form-select]').forEach(function (trigger) {
+    trigger.addEventListener('click', function () {
+      var selectedForm = trigger.getAttribute('data-form-select');
+      if (!formField || !selectedForm) return;
+      var match = Array.from(formField.options).find(function (option) {
+        return option.textContent.trim() === selectedForm.trim();
+      });
+      if (match) formField.value = match.value;
+      if (statusText) statusText.textContent = 'Selected material form: ' + selectedForm + '.';
+    });
+  });
+
+  document.querySelectorAll('[data-focus-datasheet], a[href="#hdpe-datasheet"]').forEach(function (trigger) {
+    trigger.addEventListener('click', function () {
+      window.setTimeout(function () {
+        if (datasheetField) datasheetField.focus();
+      }, 280);
+    });
+  });
+
+  if (enquiryForm && statusText) {
+    var enquiryResult = new URLSearchParams(window.location.search).get('ab_enquiry');
+    if (enquiryResult === 'sent') {
+      statusText.textContent = 'Thank you. Your material enquiry has been sent.';
+    } else if (enquiryResult === 'missing') {
+      statusText.textContent = 'Please complete your name, business email, and application or specification details.';
+    } else if (enquiryResult === 'error') {
+      statusText.textContent = 'We could not send your requirement just now. Please verify the required fields and file upload (up to 5 MB).';
+    }
+
+    enquiryForm.addEventListener('submit', function (event) {
+      var name = enquiryForm.elements.name ? enquiryForm.elements.name.value.trim() : '';
+      var email = enquiryForm.elements.email ? enquiryForm.elements.email.value.trim() : '';
+      var requirement = enquiryForm.elements.requirement ? enquiryForm.elements.requirement.value.trim() : '';
+      var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      var file = datasheetField && datasheetField.files ? datasheetField.files[0] : null;
+      var maxBytes = 5 * 1024 * 1024;
+
+      if (!name || !emailOk || !requirement) {
+        event.preventDefault();
+        statusText.textContent = 'Please add your name, a valid business email, and your application or specification details.';
+        var firstMissing = [enquiryForm.elements.name, enquiryForm.elements.email, enquiryForm.elements.requirement].find(function (field) {
+          return field && (!field.value.trim() || (field === enquiryForm.elements.email && !emailOk));
+        });
+        if (firstMissing) firstMissing.focus();
+        return;
+      }
+
+      if (file && file.size > maxBytes) {
+        event.preventDefault();
+        statusText.textContent = 'The selected file is larger than 5 MB. Please upload a smaller datasheet or specification file.';
+        datasheetField.focus();
+        return;
+      }
+
+      statusText.textContent = 'Sending your requirement...';
+    });
+  }
+
+  /* 3. Sticky sub-navigation active section spy */
+  var subnavContainer = document.querySelector('#product-section-nav, [data-subnav]');
+  var subnavLinks = subnavContainer ? Array.from(subnavContainer.querySelectorAll('a[href^="#"]')) : [];
+  var trackedSections = subnavLinks
+    .map(function (link) {
+      return document.querySelector(link.getAttribute('href'));
+    })
+    .filter(Boolean);
+
+  if (trackedSections.length && 'IntersectionObserver' in window) {
+    var sectionObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          subnavLinks.forEach(function (link) {
+            var isCurrent = link.getAttribute('href') === '#' + entry.target.id;
+            link.classList.toggle('is-current', isCurrent);
+            if (isCurrent && subnavContainer && subnavContainer.scrollWidth > subnavContainer.clientWidth) {
+              var targetLeft = link.offsetLeft - subnavContainer.clientWidth / 2 + link.offsetWidth / 2;
+              subnavContainer.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
+            }
+          });
+        });
+      },
+      { rootMargin: '-28% 0px -58% 0px', threshold: 0 }
+    );
+    trackedSections.forEach(function (section) {
+      sectionObserver.observe(section);
+    });
+  }
+})();

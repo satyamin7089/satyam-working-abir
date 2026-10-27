@@ -17,15 +17,15 @@ get_header();
             <span class="ab-eyebrow">Who We Are</span>
             <h1 id="about-title">Welcome to ABIR Overseas</h1>
             <p class="lead">We are dedicated to delivering high-quality plastic raw materials while driving innovation and sustainability across the industry. With a strong presence in the USA, India, Japan, Middle East, South East Asia, Australia, and more, we have firmly established ourselves as a leader in the industry. Our commitment to quality assurance, sustainable solutions, and customer satisfaction sets us apart.</p>
-   <div class="ab-story-pills" style="margin-bottom:20px;">
-            <span class="ab-story-pill" style="background-color:#FFFFFF">Requirements-first</span>
-            <span class="ab-story-pill" style="background-color:#FFFFFF">Grade-aware</span>
-            <span class="ab-story-pill" style="background-color:#FFFFFF">Documentation led</span>
-            <span class="ab-story-pill" style="background-color:#FFFFFF">Process-fit</span>
-            <span class="ab-story-pill" style="background-color:#FFFFFF">Clear confirmation</span>
-          </div>            
-<div class="ab-about-hero-actions">
-              <a class="ab-btn" href="#quick-enquiry">Start a conversation
+            <div class="ab-story-pills ab-hero-pills">
+              <span class="ab-story-pill">Requirements-first</span>
+              <span class="ab-story-pill">Grade-aware</span>
+              <span class="ab-story-pill">Documentation led</span>
+              <span class="ab-story-pill">Process-fit</span>
+              <span class="ab-story-pill">Clear confirmation</span>
+            </div>
+            <div class="ab-about-hero-actions">
+              <a class="ab-btn" href="<?php echo esc_url( home_url( '/#quick-enquiry' ) ); ?>">Start a conversation
                 <svg class="ab-icon" aria-hidden="true">
                   <use href="#ab-icon-arrow" />
                 </svg>
@@ -61,7 +61,7 @@ get_header();
 
         <div class="ab-story-copy ab-reveal">
           <span class="ab-eyebrow">Our story</span>
-          <h2>We help manufacturers choose material by requirement — not by catalogue.</h2>
+          <h2 id="who-title">We help manufacturers choose material by requirement — not by catalogue.</h2>
           <p>Abiroverseas was built on a simple idea: polymer supply should start with the <strong>application and
               specification</strong>, not a shortlist of grades picked in isolation. We work with buyers, processors and
             technical teams who want a clear path from brief to confirmed material.</p>
@@ -235,7 +235,7 @@ get_header();
             <p>Instead of leading with price lists, we lead with questions. The more precise the brief, the more
               useful the response.</p>
           </div>
-          <a class="ab-btn " href="#quick-enquiry">Share your brief
+          <a class="ab-btn" href="<?php echo esc_url( home_url( '/#quick-enquiry' ) ); ?>">Share your brief
             <svg class="ab-icon" aria-hidden="true">
               <use href="#ab-icon-arrow" />
             </svg>
@@ -497,16 +497,16 @@ get_header();
                   </div>
                 </div>
                 <div class="ab-faq-help-actions">
-                  <a href="#quick-enquiry" class="ab-btn">Start an enquiry
+                  <a href="<?php echo esc_url( home_url( '/#quick-enquiry' ) ); ?>" class="ab-btn">Start an enquiry
                     <svg class="ab-icon" aria-hidden="true">
                       <use href="#ab-icon-arrow" />
                     </svg>
                   </a>
-                  <a href="#" class="ab-faq-help-link">
+                  <a href="mailto:info@abiroverseas.com" class="ab-faq-help-link">
                     <svg class="ab-icon" aria-hidden="true">
                       <use href="#ab-icon-mail" />
                     </svg>
-                    Add company email
+                    info@abiroverseas.com
                   </a>
                 </div>
               </div>
@@ -638,8 +638,8 @@ get_header();
                   </div>
                 </summary>
                 <div class="ab-faq-body">
-                  <p>Use the <a href="#quick-enquiry" style="color:var(--ab-blue);font-weight:700">quote request</a>
-                    at the bottom of the page, or email the address shown in the top bar.</p>
+                  <p>Use the <a href="<?php echo esc_url( home_url( '/#quick-enquiry' ) ); ?>" class="ab-inline-link">quote request</a>
+                    form, or email the address shown in the top bar.</p>
                   <p>A short description of your <strong>application, preferred material and quantity</strong> is
                     usually enough for a useful first reply.</p>
                 </div>

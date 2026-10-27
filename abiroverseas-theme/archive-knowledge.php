@@ -8,7 +8,7 @@ $current_material = sanitize_title( get_query_var( 'knowledge_material' ) );
 $current_topic = sanitize_title( get_query_var( 'knowledge_topic' ) );
 $current_hub = sanitize_title( get_query_var( 'knowledge_hub' ) );
 ?>
-<main id="kh-main" class="kh-main">
+<main id="main-content" class="kh-main">
   <section class="kh-hero"><div class="kh-shell kh-hero-grid">
     <div><span class="kh-eyebrow">Knowledge Hub</span><h1>Material knowledge, made practical.</h1><p>Find straight answers, material comparisons, processing guidance and FAQs. Choose a material or topic to narrow the library.</p></div>
     <div class="kh-hero-note"><strong>How to use this hub</strong><p>Start with a product type such as HDPE, then narrow by comparisons, FAQs, grades or applications. Search by article or material name at any time.</p></div>

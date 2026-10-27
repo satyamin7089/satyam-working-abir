@@ -14,7 +14,7 @@ get_header();
                
                 <!-- Banner four: blurred background plus a four-image right-side fade carousel. -->
                 <article class="ab-home-slide ab-home-slide--final">
-                    <div class="ab-wrap ab-hero-grid ab-hero-grid--gallery"><div class="ab-hero-copy"><span class="ab-eyebrow">Materials · forms · applications</span><h1>Transforming Industrial Plastics
+                    <div class="ab-wrap ab-hero-grid ab-hero-grid--gallery"><div class="ab-hero-copy"><span class="ab-eyebrow">Materials · forms · applications</span><h1 id="home-title">Transforming Industrial Plastics
 Across the Globe</h1><p>Abir bridges the worlds of recycling and manufacturing, transforming discarded plastics into valuable resources with renewed purpose. Rooted in trust, reliability, and a growing global reach, we partner with businesses across continents to deliver sustainable, high-quality solutions that drive the circular economy forward. Our mission is to reimagine the lifecycle of plastics and build a future where nothing goes to waste.</p><div class="ab-hero-actions"><a class="ab-btn" href="#quick-enquiry">START AN ENQUIRY <svg class="ab-icon" aria-hidden="true"><use href="#ab-icon-arrow" /></svg></a><a class="ab-btn ab-btn--light" href="#product-families">BROWSE MATERIALS</a></div></div>
                         <div class="ab-hero-art ab-hero-art--rotating" aria-label="Polymer materials image gallery"><span class="ab-art-tag">A closer look · materials</span><div class="ab-hero-photo-frame" data-hero-photo-gallery>
                             <figure class="ab-hero-photo is-active" data-hero-photo aria-hidden="false"><img src="<?php echo esc_url( home_url( '/wp-content/uploads/2026/10/r-p-10.png' ) ); ?>" alt="Industrial resin pellets and flowing waves" loading="lazy"></figure>
@@ -49,7 +49,7 @@ image class for responsive cropping. -->
                             href="<?php echo esc_url( home_url( '/hdpe/' ) ); ?>">EXPLORE HDPE <svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
                             </svg></a><a class="ab-btn" href="<?php echo esc_url( home_url( '/knowledge/' ) ); ?>">VIEW
-                            KNOWLEDGE CENTER <svg class="ab-icon" aria- hidden="true">
+                            KNOWLEDGE CENTER <svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
                             </svg></a></div>
                 </div>
@@ -61,7 +61,7 @@ image class for responsive cropping. -->
                         <h3>PP</h3>
                         <p class="ab-family-summary">A polypropylene family for process-led applications. Share your
                             moulding or extrusion method, the target properties and any existing grade for review.</p><a
-                            class="ab-link" href="#quick-enquiry" data- enquiry="PP">Enquire about this group <svg
+                            class="ab-link" href="#quick-enquiry" data-enquiry="PP">Enquire about this group <svg
                                 class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
                             </svg></a>
@@ -102,8 +102,7 @@ src="<?php echo esc_url( get_theme_file_uri( '/assets/img/pellets-macro.jpg' ) )
                         <p class="ab-family-summary">PVC and PET are distinct 
 polymer families. Share the exact resin,
                             product application, processing method and relevant technical specification.</p><a
-                            class="ab-link" href="#quick-enquiry" data-
-enquiry="PVC / PET">Enquire about this group <svg
+                            class="ab-link" href="#quick-enquiry" data-enquiry="PVC / PET">Enquire about this group <svg
                                 class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
                             </svg></a>
@@ -118,8 +117,7 @@ src="<?php echo esc_url( get_theme_file_uri( '/assets/img/pellets-macro.jpg' ) )
 have different performance profiles.
                             Specify the resin or existing grade, impact needs, 
 appearance and process.</p><a
-                            class="ab-link" href="#quick-enquiry" data-
-enquiry="ABS / PS-HIPS">Enquire about this group
+                            class="ab-link" href="#quick-enquiry" data-enquiry="ABS / PS-HIPS">Enquire about this group
                             <svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
                             </svg></a>
@@ -145,7 +143,7 @@ resin, base polymer, additive or
             </div>
         </section>
         <!-- 3. Material grades & forms 
-        <section class="ab-section ab-section--mist" id="materials" aria- labelledby="materials-title">
+        <section class="ab-section ab-section--mist" id="materials" aria-labelledby="materials-title">
             <div class="ab-wrap">
                 <div class="ab-section-head ab-reveal"><span class="ab-eyebrow">Specification, simplified</span>
                     <h2 id="materials-title">Find the right starting point.</h2>
@@ -155,7 +153,7 @@ resin, base polymer, additive or
                 </div>
                 <div class="ab-grade-board">
                     <div class="ab-grade-panel ab-reveal">
-                        <div class="ab-icon-box"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-icon-box"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-layers" />
                             </svg></div>
                         <h3>Material &amp; grade</h3>
@@ -198,7 +196,7 @@ resin, base polymer, additive or
             </div>
         </section>-->
         <!-- 4. Manufacturing segments / processing methods -->
-        <section class="ab-section ab-process-section" id="processing" aria- labelledby="processing-title">
+        <section class="ab-section ab-process-section" id="processing" aria-labelledby="processing-title">
             <div class="ab-wrap">
                 <div class="ab-process-intro">
                     <div class="ab-section-head ab-reveal"><span class="ab-eyebrow">From recycled resin to finished form</span>
@@ -243,7 +241,7 @@ resin, base polymer, additive or
                 </div>
                 <div class="ab-market-grid">
                     <article class="ab-market-card ab-reveal">
-                        <div class="ab-icon-box"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-icon-box"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-industry" />
                             </svg></div>
                         <h3>Packaging &amp; containers</h3>
@@ -266,7 +264,7 @@ resin, base polymer, additive or
                         <p>Recycled polymer parts shaped around function, finish and processing needs.</p>
                     </article>
                     <article class="ab-market-card ab-reveal">
-                        <div class="ab-icon-box"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-icon-box"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-globe" />
                             </svg></div>
                         <h3>Infrastructure</h3>
@@ -289,7 +287,7 @@ resin, base polymer, additive or
                         <p>Sustainable polymer solutions where design, exposure and compliance matter.</p>
                     </article>
                     <article class="ab-market-card ab-reveal">
-                        <div class="ab-icon-box"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-icon-box"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-beaker" />
                             </svg></div>
                         <h3>Agriculture &amp; water</h3>
@@ -318,28 +316,28 @@ resin, base polymer, additive or
                 </div>
                 <div class="ab-enquiry-steps">
                     <article class="ab-step ab-reveal">
-                        <div class="ab-icon-box"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-icon-box"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-chat" />
                             </svg></div>
                         <h3>Tell us the need</h3>
                         <p>Identify the material, application and any preferred grade or form.</p>
                     </article>
                     <article class="ab-step ab-reveal ab-reveal-delay-1">
-                        <div class="ab-icon-box"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-icon-box"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-file" />
                             </svg></div>
                         <h3>Review the details</h3>
                         <p>Clarify quantity, specification, process and delivery expectations.</p>
                     </article>
                     <article class="ab-step ab-reveal ab-reveal-delay-2">
-                        <div class="ab-icon-box"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-icon-box"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-scale" />
                             </svg></div>
                         <h3>Discuss a quotation</h3>
                         <p>Commercial terms and supply options can be considered against the brief.</p>
                     </article>
                     <article class="ab-step ab-reveal ab-reveal-delay-3">
-                        <div class="ab-icon-box"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-icon-box"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-check" />
                             </svg></div>
                         <h3>Coordinate next steps</h3>
@@ -358,7 +356,7 @@ quote” / Supply capabilities section. -->
         <!-- Temporarily commented out per request: “Featured knowledge” 
 section. The Knowledge Hub remains available on /knowledge/. -->
         <!-- 9. Company credibility -->
-        <section class="ab-section ab-credibility" id="credibility" aria- labelledby="credibility-title">
+        <section class="ab-section ab-credibility" id="credibility" aria-labelledby="credibility-title">
             <div class="ab-wrap ab-credibility-grid">
                 <div class="ab-credibility-visual ab-reveal" role="img"
                     aria-label="Virgin and recycled polymer pellets compared side by side"><img
@@ -378,17 +376,17 @@ section. The Knowledge Hub remains available on /knowledge/. -->
                         can be identified before a commercial
                         decision.</p>
                     <div class="ab-values">
-                        <div class="ab-value"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-value"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-check" />
                             </svg><span><strong>Clarity before
                                     commitment</strong> — confirm the grade, form and terms
                                 relevant to the enquiry.</span></div>
-                        <div class="ab-value"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-value"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-check" />
                             </svg><span><strong>Application-led
                                     discussion</strong> — keep the use case and processing
                                 needs in view.</span></div>
-                        <div class="ab-value"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-value"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-check" />
                             </svg><span><strong>Honest information</strong> —
                                 specific credentials and capabilities can
@@ -413,7 +411,7 @@ verified documents. -->
                 </div>
                 <div class="ab-cert-grid">
                     <article class="ab-cert-card ab-reveal">
-                        <div class="ab-cert-icon"><svg class="ab-icon" aria- hidden="true">
+                        <div class="ab-cert-icon"><svg class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-shield" />
                             </svg></div>
                         <div class="ab-cert-status">PLACEHOLDER · NOT A VERIFIED CERTIFICATE</div>
@@ -491,7 +489,7 @@ must be replaced.
             </div>
         </section> -->
         <!-- 12. Quick enquiry options -->
-        <section class="ab-section ab-enquiry-section" id="quick-enquiry" aria- labelledby="quick-enquiry-title">
+        <section class="ab-section ab-enquiry-section" id="quick-enquiry" aria-labelledby="quick-enquiry-title">
             <div class="ab-wrap ab-enquiry-layout">
                 <div class="ab-enquiry-copy ab-reveal"><span class="ab-eyebrow">Quick enquiry options</span>
                     <h2 id="quick-enquiry-title">What can we help you clarify?
@@ -557,7 +555,7 @@ must be replaced.
                                 placeholder="Material, grade or form, application, quantity and any timing details"></textarea>
                         </div>
                     </div>
-                    <div class="ab-form-foot"><button class="ab-btn ab-btn--blue" type="submit">Review enquiry <svg
+                    <div class="ab-form-foot"><button class="ab-btn" type="submit">Review enquiry <svg
                                 class="ab-icon" aria-hidden="true">
                                 <use href="#ab-icon-arrow" />
                             </svg></button><span class="ab-form-status" id="home-form-status" role="status"

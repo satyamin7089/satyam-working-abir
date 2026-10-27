@@ -2,7 +2,7 @@
 /** Abiroverseas — WordPress theme functions. */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'AB_THEME_VERSION', '1.4.1' );
+define( 'AB_THEME_VERSION', '1.5.0' );
 
 add_action( 'after_setup_theme', 'ab_theme_setup' );
 function ab_theme_setup() {
@@ -64,33 +64,42 @@ function ab_enqueue_assets() {
          */
         $page_id = get_queried_object_id();
         $slug = get_post_field( 'post_name', $page_id );
-        $template = get_page_template_slug( $page_id );
+        $template = str_replace( 'page-templates/', 'page-template/', (string) get_page_template_slug( $page_id ) );
+        $material_templates = array(
+            'page-template/template-material.php',
+            'page-template/template-material-Recycled-Plastics.php',
+            'page-template/template-material-PS.php',
+            'page-template/template-material-ABS.php',
+            'page-template/template-material-EVA.php',
+            'page-template/template-material-PVC.php',
+            'page-template/template-material-PP.php',
+            'page-template/template-material-LDPE.php',
+        );
 
-        if ( is_front_page() || 'home' === $slug || 'page-templates/template-home.php' === $template ) {
+        if ( is_front_page() || 'home' === $slug || 'page-template/template-home.php' === $template ) {
             $style = 'home.css';
             $script = 'home.js';
-        } elseif ( 'about' === $slug || 'page-templates/template-about.php' === $template ) {
+        } elseif ( 'about' === $slug || 'page-template/template-about.php' === $template ) {
             $style = 'about.css';
             $script = 'about.js';
         } elseif ( in_array( $slug, array( 'products', 'product-families', 'product-range' ), true ) || in_array( $template, array( 'page-template/template-product-families.php', 'page-template/template-product-range.php' ), true ) ) {
             // Both product directories share one responsive design system and live-search controller.
             $style = 'products.css';
             $script = 'products.js';
-        } elseif ( 'contact-us' === $slug || 'page-template/template-contact.php' === $template ) {
-            // Keep Contact page styling isolated in its own stylesheet.
+        } elseif ( 'contact-us' === $slug || 'contact' === $slug || 'page-template/template-contact.php' === $template ) {
             $style = 'contact.css';
-        }elseif ( in_array( $slug, array( 'recycled-plastics','ps','abs','eva','pvc','pp','ldpe','hdpe', 'material', 'materials' ), true ) || 'page-templates/template-material.php' === $template || 'page-templates/template-material-Recycled-Plastics.php' === $template || 'page-templates/template-material-PS.php' === $template || 'page-templates/template-material-ABS.php' === $template || 'page-templates/template-material-EVA.php' === $template || 'page-templates/template-material-PVC.php' === $template || 'page-templates/template-material-PP.php' === $template || 'page-templates/template-material-LDPE.php' === $template  ) {
+        } elseif ( in_array( $slug, array( 'recycled-plastics', 'ps', 'abs', 'eva', 'pvc', 'pp', 'ldpe', 'hdpe', 'material', 'materials' ), true ) || in_array( $template, $material_templates, true ) ) {
             $style = 'material.css';
             $script = 'material.js';
         }
     }
-    // Load the declared brand font once so every template, including the shared header, uses the same real font instead of silently falling back.
+    // Load the declared brand font once, then shared site design tokens/base/chrome, then page-specific layout styles.
     wp_enqueue_style( 'ab-reddit-sans', 'https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700;800&display=swap', array(), null );
-    if ( $style ) { wp_enqueue_style( 'ab-page-layout', $base . '/assets/css/' . $style, array( 'ab-reddit-sans' ), $version ); }
-    wp_enqueue_style( 'ab-site-footer', $base . '/assets/css/site.css', $style ? array( 'ab-page-layout' ) : array( 'ab-reddit-sans' ), $version );
-    if ( $script ) { wp_enqueue_script( 'ab-page-interactions', $base . '/assets/js/' . $script, array(), $version, true ); }
-    // One navigation controller serves the shared header on every page.
+    wp_enqueue_style( 'ab-site-footer', $base . '/assets/css/site.css', array( 'ab-reddit-sans' ), $version );
+    if ( $style ) { wp_enqueue_style( 'ab-page-layout', $base . '/assets/css/' . $style, array( 'ab-site-footer' ), $version ); }
+    // One navigation & reveal controller serves the shared header and scroll animations on every page.
     wp_enqueue_script( 'ab-navigation', $base . '/assets/js/navigation.js', array(), $version, true );
+    if ( $script ) { wp_enqueue_script( 'ab-page-interactions', $base . '/assets/js/' . $script, array( 'ab-navigation' ), $version, true ); }
 }
 
 /** Install starter pages without overwriting existing page copy. */
@@ -518,24 +527,28 @@ add_action( 'admin_post_nopriv_ab_material_enquiry', 'ab_handle_material_enquiry
 add_action( 'admin_post_ab_material_enquiry', 'ab_handle_material_enquiry' );
 function ab_handle_material_enquiry() {
     $kind = isset( $_POST['enquiry_kind'] ) && is_scalar( $_POST['enquiry_kind'] ) ? sanitize_key( wp_unslash( $_POST['enquiry_kind'] ) ) : 'general';
-    $is_hdpe = 'hdpe' === $kind;
-    $fallback = home_url( $is_hdpe ? '/hdpe/' : '/' );
+    $material_kinds = array( 'hdpe', 'abs', 'eva', 'ldpe', 'pp', 'ps', 'pvc', 'recycled-plastics', 'recycled_plastics', 'material' );
+    $is_material = in_array( $kind, $material_kinds, true ) || ( isset( $_POST['requirement'] ) && ! isset( $_POST['message'] ) );
+    $fallback_slug = ( $is_material && 'material' !== $kind ) ? '/' . str_replace( '_', '-', $kind ) . '/' : '/';
+    $fallback = home_url( $fallback_slug );
     $referer = wp_get_referer();
     $redirect = wp_validate_redirect( $referer ? $referer : $fallback, $fallback );
     $result = 'error';
     if ( isset( $_POST['ab_material_enquiry_nonce'] ) && is_scalar( $_POST['ab_material_enquiry_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ab_material_enquiry_nonce'] ) ), 'ab_material_enquiry' ) && ( ! isset( $_POST['ab_website'] ) || ( is_scalar( $_POST['ab_website'] ) && '' === (string) $_POST['ab_website'] ) ) ) {
         $name = isset( $_POST['name'] ) && is_scalar( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
         $email = isset( $_POST['email'] ) && is_scalar( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
-        $required_key = $is_hdpe ? 'requirement' : 'message';
+        $required_key = $is_material ? 'requirement' : 'message';
         $required = isset( $_POST[ $required_key ] ) && is_scalar( $_POST[ $required_key ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $required_key ] ) ) : '';
-        if ( $name && is_email( $email ) && $required ) {
+        if ( ! $name || ! is_email( $email ) || ! $required ) {
+            $result = 'missing';
+        } else {
             $labels = array(
                 'company' => 'Company', 'topic' => 'Material / topic', 'material_type' => 'Material type', 'processing_method' => 'Processing method', 'manufacturer' => 'Manufacturer / source', 'grade' => 'Grade', 'form' => 'Form', 'color' => 'Color', 'quantity' => 'Quantity', 'destination' => 'Destination', 'requirement' => 'Requirement', 'pack_size' => 'Pack size', 'frequency' => 'Frequency', 'delivery_date' => 'Required delivery date', 'documents' => 'Documents needed', 'notes' => 'Additional notes', 'message' => 'Message',
             );
             $lines = array( 'Name: ' . $name, 'Email: ' . $email );
             foreach ( $labels as $field => $label ) { if ( isset( $_POST[ $field ] ) && is_scalar( $_POST[ $field ] ) && '' !== (string) $_POST[ $field ] ) { $lines[] = $label . ': ' . sanitize_textarea_field( wp_unslash( $_POST[ $field ] ) ); } }
             $attachments = array();
-            if ( $is_hdpe && isset( $_FILES['datasheet'] ) && is_array( $_FILES['datasheet'] ) ) {
+            if ( $is_material && isset( $_FILES['datasheet'] ) && is_array( $_FILES['datasheet'] ) ) {
                 $file = $_FILES['datasheet'];
                 $upload_error = isset( $file['error'] ) && is_scalar( $file['error'] ) ? (int) $file['error'] : UPLOAD_ERR_NO_FILE;
                 if ( UPLOAD_ERR_NO_FILE !== $upload_error ) {
@@ -544,18 +557,19 @@ function ab_handle_material_enquiry() {
                     $file_name = isset( $file['name'] ) && is_scalar( $file['name'] ) ? $file['name'] : '';
                     $allowed = array( 'pdf' => 'application/pdf', 'doc' => 'application/msword', 'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'xls' => 'application/vnd.ms-excel', 'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'csv' => 'text/csv', 'jpg|jpeg|jpe' => 'image/jpeg', 'png' => 'image/png' );
                     $checked = ( UPLOAD_ERR_OK === $upload_error && $file_size > 0 && $file_size <= 5 * MB_IN_BYTES && $file_tmp && $file_name ) ? wp_check_filetype_and_ext( $file_tmp, $file_name, $allowed ) : array();
-                    if ( empty( $checked['type'] ) || ! is_uploaded_file( $file_tmp ) ) { ab_enquiry_redirect( $redirect, 'error', $is_hdpe ); }
+                    if ( empty( $checked['type'] ) || ! is_uploaded_file( $file_tmp ) ) { ab_enquiry_redirect( $redirect, 'error', $is_material ); }
                     $attachments[] = $file_tmp;
                     $lines[] = 'Attached file: ' . sanitize_file_name( $file_name );
                 }
             }
-            $subject = sprintf( '[%s] Material enquiry from %s', $is_hdpe ? 'HDPE' : 'Website', $name );
+            $tag = $is_material ? strtoupper( str_replace( array( '-', '_' ), ' ', $kind ) ) : 'Website';
+            $subject = sprintf( '[%s] Material enquiry from %s', $tag, $name );
             $headers = array( 'Reply-To: ' . $name . ' <' . $email . '>' );
             $sent = wp_mail( get_option( 'admin_email' ), $subject, implode( "\n", $lines ), $headers, $attachments );
             if ( $sent ) { $result = 'sent'; }
         }
     }
-    ab_enquiry_redirect( $redirect, $result, $is_hdpe );
+    ab_enquiry_redirect( $redirect, $result, $is_material );
 }
 function ab_enquiry_redirect( $url, $result, $is_hdpe ) {
     $url = remove_query_arg( 'ab_enquiry', $url );

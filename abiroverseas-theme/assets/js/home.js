@@ -1,142 +1,145 @@
-(() => {
-            const nav = document.querySelector('.ab-nav-links'); const toggle = document.querySelector('.ab-nav-toggle'); const reduceMotion =
-                window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            if (toggle && nav) {
-                toggle.addEventListener('click', () => {
-                    const open = toggle.getAttribute('aria-expanded') !== 'true';
-                    toggle.setAttribute('aria-expanded', String(open)); toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
-                    nav.classList.toggle('is-open', open)
-                }); nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
-                    if (window.innerWidth <= 850) {
-                        nav.classList.remove('is-open'); toggle.setAttribute('aria-expanded',
-                            'false'); toggle.setAttribute('aria-label', 'Open navigation menu')
-                    }
-                }));
-                document.addEventListener('click', e => {
-                    if (window.innerWidth <= 850 &&
-                        nav.classList.contains('is-open') && !nav.contains(e.target) && !
-                        toggle.contains(e.target)) {
-                            nav.classList.remove('is-open');
-                        toggle.setAttribute('aria-expanded', 'false')
-                    }
-                });
-                window.addEventListener('resize', () => {
-                    if (window.innerWidth > 850) {nav.classList.remove('is-open'); toggle.setAttribute('aria-expanded', 'false')}
-                })
-            }
-            const revealEls = document.querySelectorAll('.ab-reveal:not(.is-visible)'); if ('IntersectionObserver' in window && !reduceMotion) {
-                const
-                observer = new IntersectionObserver(entries => entries.forEach(entry => {
-                    if
-                        (entry.isIntersecting) {
-                            entry.target.classList.add('is-visible');
-                        observer.unobserve(entry.target)
-                    }
-                }), {threshold: .12, rootMargin: '0px 0px -25px 0px'}); revealEls.forEach(el => observer.observe(el))
-            } else
-                revealEls.forEach(el => el.classList.add('is-visible'));
-            const form = document.querySelector('#enquiry-form'), status =
-                document.querySelector('#home-form-status'), topic =
-                    document.querySelector('#home-topic'); document.querySelectorAll('[data-enquiry]').forEach(link => link.addEventListener('click', () => {
-                        const val =
-                            link.getAttribute('data-enquiry'); if (topic) {
-                                const option =
-                                    [...topic.options].find(o => o.text.toLowerCase() === val.toLowerCase()); if
-                                    (option) topic.value = option.value; else if (val) topic.value = 'Other'
-                            }
-                    })); if (form) {
-                form.addEventListener('submit', e => {
-                    if (!form.reportValidity()) { e.preventDefault(); if (status) { status.textContent = 'Please complete the required fields and check the email address.'; status.dataset.state = 'error'; } return; }
-                    if (status) { status.textContent = 'Sending your enquiry…'; status.dataset.state = 'info'; }
-                });
-            }
-            document.querySelectorAll('[data-current-year]').forEach(el =>
-                el.textContent = new Date().getFullYear());
-        })();
+/**
+ * Homepage interactions: hero photo gallery (with touch swipe) and quick-enquiry prefill/validation.
+ */
+(function () {
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        const result = new URLSearchParams(window.location.search).get('ab_enquiry');
-        if (result) { const node = document.querySelector('#home-form-status'); if (node) { node.textContent = result === 'sent' ? 'Thank you. Your enquiry has been sent.' : 'We could not send your enquiry. Please try again or contact us directly.'; node.dataset.state = result === 'sent' ? 'success' : 'error'; } }
+  /* 1. Hero four-image rotating gallery + touch swipe */
+  var heroGallery = document.querySelector('.ab-hero-art--rotating');
+  var heroPhotos = Array.from(document.querySelectorAll('[data-hero-photo]'));
+  var photoThumbs = Array.from(document.querySelectorAll('[data-photo-thumb]'));
+  var prevPhotoButton = document.querySelector('[data-photo-prev]');
+  var nextPhotoButton = document.querySelector('[data-photo-next]');
+  var activePhoto = 0;
+  var photoTimer = null;
 
+  var setHeroPhoto = function (nextIndex) {
+    if (!heroPhotos.length) return;
+    activePhoto = (nextIndex + heroPhotos.length) % heroPhotos.length;
+    heroPhotos.forEach(function (photo, index) {
+      var isCurrent = index === activePhoto;
+      photo.classList.toggle('is-active', isCurrent);
+      photo.setAttribute('aria-hidden', String(!isCurrent));
+    });
+    photoThumbs.forEach(function (thumb, index) {
+      var isCurrent = index === activePhoto;
+      thumb.classList.toggle('is-active', isCurrent);
+      thumb.setAttribute('aria-pressed', String(isCurrent));
+    });
+  };
 
-/* Stable cross-fade, thumbnail selection and arrow controls for the final banner gallery. */
-(() => {
-  const gallery = document.querySelector('[data-hero-photo-gallery]');
-  if (!gallery) return;
-  const photos = [...gallery.querySelectorAll('[data-hero-photo]')];
-  if (photos.length < 2) return;
-  const art = gallery.closest('.ab-hero-art');
-  const thumbs = art ? [...art.querySelectorAll('[data-photo-thumb]')] : [];
-  const previous = art?.querySelector('[data-photo-prev]');
-  const next = art?.querySelector('[data-photo-next]');
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let active = photos.find(photo => photo.classList.contains('is-active')) || photos[0];
-  let timer = null;
+  var stopPhotoRotation = function () {
+    if (photoTimer) {
+      window.clearInterval(photoTimer);
+      photoTimer = null;
+    }
+  };
 
-  function readyPhotos() {
-    return photos.filter(photo => photo.dataset.photoReady === 'true');
+  var startPhotoRotation = function () {
+    if (prefersReducedMotion || heroPhotos.length < 2) return;
+    stopPhotoRotation();
+    photoTimer = window.setInterval(function () {
+      setHeroPhoto(activePhoto + 1);
+    }, 3800);
+  };
+
+  photoThumbs.forEach(function (thumb, index) {
+    thumb.addEventListener('click', function () {
+      setHeroPhoto(index);
+      startPhotoRotation();
+    });
+  });
+
+  if (prevPhotoButton) {
+    prevPhotoButton.addEventListener('click', function () {
+      setHeroPhoto(activePhoto - 1);
+      startPhotoRotation();
+    });
   }
-  function setActive(photo) {
-    active = photo;
-    photos.forEach((item, index) => {
-      const selected = item === active;
-      item.classList.toggle('is-active', selected);
-      item.setAttribute('aria-hidden', String(!selected));
-      if (thumbs[index]) {
-        thumbs[index].classList.toggle('is-active', selected);
-        thumbs[index].setAttribute('aria-pressed', String(selected));
+
+  if (nextPhotoButton) {
+    nextPhotoButton.addEventListener('click', function () {
+      setHeroPhoto(activePhoto + 1);
+      startPhotoRotation();
+    });
+  }
+
+  if (heroGallery && heroPhotos.length > 1) {
+    heroGallery.addEventListener('mouseenter', stopPhotoRotation);
+    heroGallery.addEventListener('mouseleave', startPhotoRotation);
+    heroGallery.addEventListener('focusin', stopPhotoRotation);
+    heroGallery.addEventListener('focusout', startPhotoRotation);
+
+    var touchStartX = 0;
+    var touchStartY = 0;
+    heroGallery.addEventListener('touchstart', function (e) {
+      if (!e.touches || !e.touches.length) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    heroGallery.addEventListener('touchend', function (e) {
+      if (!e.changedTouches || !e.changedTouches.length) return;
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      var dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy)) {
+        setHeroPhoto(dx < 0 ? activePhoto + 1 : activePhoto - 1);
+        startPhotoRotation();
+      }
+    }, { passive: true });
+
+    startPhotoRotation();
+  }
+
+  /* 2. Quick-enquiry topic prefill */
+  var topicField = document.querySelector('#home-topic');
+  var statusText = document.querySelector('#home-form-status');
+  var form = document.querySelector('#enquiry-form');
+
+  document.querySelectorAll('[data-enquiry]').forEach(function (trigger) {
+    trigger.addEventListener('click', function () {
+      var topic = trigger.getAttribute('data-enquiry');
+      if (!topicField || !topic) return;
+      var match = Array.from(topicField.options).find(function (option) {
+        return option.textContent.trim() === topic.trim();
+      });
+      if (match) {
+        topicField.value = match.value;
+      }
+      if (statusText) {
+        statusText.textContent = 'Selected enquiry type: ' + topic + '.';
+      }
+    });
+  });
+
+  /* 3. Form validation & server status notice */
+  if (form && statusText) {
+    var enquiryResult = new URLSearchParams(window.location.search).get('ab_enquiry');
+    if (enquiryResult === 'sent') {
+      statusText.textContent = 'Thank you. Your enquiry has been sent.';
+    } else if (enquiryResult === 'missing') {
+      statusText.textContent = 'Please complete your name, business email, enquiry type, and requirement details.';
+    } else if (enquiryResult === 'error') {
+      statusText.textContent = 'We could not send your enquiry just now. Please verify the required fields and try again.';
+    }
+
+    form.addEventListener('submit', function (event) {
+      var name = form.elements.name ? form.elements.name.value.trim() : '';
+      var email = form.elements.email ? form.elements.email.value.trim() : '';
+      var topic = form.elements.topic ? form.elements.topic.value.trim() : '';
+      var message = form.elements.message ? form.elements.message.value.trim() : '';
+      var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+      if (!name || !emailOk || !topic || !message) {
+        event.preventDefault();
+        statusText.textContent = 'Please complete your name, a valid business email, enquiry type, and requirement details.';
+        var firstMissing = [form.elements.name, form.elements.email, form.elements.topic, form.elements.message].find(function (field) {
+          return field && (!field.value.trim() || (field === form.elements.email && !emailOk));
+        });
+        if (firstMissing) firstMissing.focus();
+      } else {
+        statusText.textContent = 'Sending your enquiry...';
       }
     });
   }
-  function stop() {
-    if (timer) window.clearInterval(timer);
-    timer = null;
-  }
-  function start() {
-    stop();
-    if (reduceMotion || document.hidden || readyPhotos().length < 2) return;
-    timer = window.setInterval(() => step(1), 7000);
-  }
-  function step(direction) {
-    const ready = readyPhotos();
-    if (ready.length < 2) return;
-    let index = ready.indexOf(active);
-    if (index < 0) index = direction > 0 ? -1 : 0;
-    setActive(ready[(index + direction + ready.length) % ready.length]);
-  }
-  function updatePhotoState(photo, image) {
-    photo.dataset.photoReady = image.naturalWidth > 0 ? 'true' : 'false';
-    const ready = readyPhotos();
-    if (!ready.includes(active) && ready.length) setActive(ready[0]);
-    start();
-  }
-
-  photos.forEach(photo => {
-    const image = photo.querySelector('img');
-    if (!image) {
-      photo.dataset.photoReady = 'false';
-      return;
-    }
-    image.loading = 'eager';
-    if (image.complete) {
-      updatePhotoState(photo, image);
-    } else {
-      image.addEventListener('load', () => updatePhotoState(photo, image), { once: true });
-      image.addEventListener('error', () => updatePhotoState(photo, image), { once: true });
-    }
-  });
-
-  if (art && thumbs.length) {
-    art.classList.add('has-gallery-controls');
-    thumbs.forEach(button => button.addEventListener('click', () => {
-      const photo = photos[Number(button.dataset.photoThumb)];
-      if (photo && readyPhotos().includes(photo)) {
-        setActive(photo);
-        start();
-      }
-    }));
-    previous?.addEventListener('click', () => { step(-1); start(); });
-    next?.addEventListener('click', () => { step(1); start(); });
-  }
-  document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
-  start();
 })();
